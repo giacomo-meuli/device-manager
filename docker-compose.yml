@@ -1,0 +1,33 @@
+version: '3.8'
+
+services:
+  mosquitto:
+    image: eclipse-mosquitto:2.0
+    container_name: mosquitto
+    ports:
+      - "1883:1883"
+      - "9001:9001"
+    volumes:
+      - ./mosquitto.conf:/mosquitto/config/mosquitto.conf
+
+  device_manager:
+    build: ./device_manager
+    container_name: device_manager
+    depends_on:
+      - mosquitto
+
+  device1:
+    build: ./device
+    container_name: device1
+    environment:
+      - DEVICE_ID=device1
+    depends_on:
+      - mosquitto
+
+  device2:
+    build: ./device
+    container_name: device2
+    environment:
+      - DEVICE_ID=device2
+    depends_on:
+      - mosquitto
